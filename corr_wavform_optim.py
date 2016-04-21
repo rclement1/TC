@@ -95,38 +95,38 @@ cor_trace_vals,xc = pairTraces(window_length,st_full_n)
 
 # finds where the index of the maximum xcorr value window is
 # then creates array with just that window in it
-max_xcorr = np.where(xcorr_dat == max(xcorr_dat[index[0],index[1]]))[0][0]
-best_win = np.repeat(float('NaN'),len(st_full_n))
-best_win[max_xcorr:max_xcorr+window_length] = st_full_n[max_xcorr:max_xcorr+window_length]
+#max_xcorr = np.where(xcorr_dat == max(xcorr_dat[index[0],index[1]]))[0][0]
+#best_win = np.repeat(float('NaN'),len(st_full_n))
+#best_win[max_xcorr:max_xcorr+window_length] = st_full_n[max_xcorr:max_xcorr+window_length]
 
 
 # In[10]:
 
 #plots and plots and plots
-file_name = 'W' + str(window_length) + "_SD" + str(full_time_start.day) + "_ST" + str(full_time_start.time) + "_ED" + str(full_time_end.day) + "_ET" + str(full_time_end.time)
-plt.figure(1)
-plt.subplot(211)
-plt.title("Best cross correlation window (highest max value)")
-# best cross-correlation window
-plt.plot(xcorr_dat[max_xcorr])
-plt.subplot(212)
-plt.title("Best match window")
-# window which had the best match
-ax1 = plt.plot(st_full_n[max_xcorr:max_xcorr+window_length])
-#plt.savefig("/exports/home/s1016630/" + file_name + "_1.png")
-plt.figure(2)
-plt.subplot(211)# full cross correlation
-plt.title("Full cross-correlation")
-plt.plot(xcorr_dat)
-ax2 = plt.subplot(212)
-plt.title("Full dataset with best window in red")
-# plots the full dataset with the best window overlayed in red
-plt.plot(st_full_n)
-plt.plot(best_win,'r')
-#ax2.autoscale(enable=False)
+#file_name = 'W' + str(window_length) + "_SD" + str(full_time_start.day) + "_ST" + str(full_time_start.time) + "_ED" + str(full_time_end.day) + "_ET" + str(full_time_end.time)
+#plt.figure(1)
+#plt.subplot(211)
+#plt.title("Best cross correlation window (highest max value)")
+## best cross-correlation window
+#plt.plot(xcorr_dat[max_xcorr])
+#plt.subplot(212)
+#plt.title("Best match window")
+## window which had the best match
+#ax1 = plt.plot(st_full_n[max_xcorr:max_xcorr+window_length])
+##plt.savefig("/exports/home/s1016630/" + file_name + "_1.png")
+#plt.figure(2)
+#plt.subplot(211)# full cross correlation
+#plt.title("Full cross-correlation")
+#plt.plot(xcorr_dat)
+#ax2 = plt.subplot(212)
+#plt.title("Full dataset with best window in red")
+## plots the full dataset with the best window overlayed in red
+#plt.plot(st_full_n)
+#plt.plot(best_win,'r')
+##ax2.autoscale(enable=False)
 #plt.savefig("/exports/home/s1016630/" + file_name + "_2.png")
-plt.show()
-#plt.savefig("/exports/home/s1016630/" + file_name + ".png")
+#plt.show()
+##plt.savefig("/exports/home/s1016630/" + file_name + ".png")
 
 
 # In[ ]:
