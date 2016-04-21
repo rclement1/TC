@@ -37,7 +37,7 @@ st_full = st.slice(full_time_start,full_time_end)
 
 # normalize the data and select window length
 st_full_n = st_full[0].normalize(norm=None)
-window_length = 100
+window_length = 1000
 correlation_value = 1
 
 
