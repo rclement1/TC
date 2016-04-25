@@ -11,7 +11,7 @@
 # 
 # 4 - Full dataset with best window
 
-# In[1]:
+# In[2]:
 
 #get_ipython().magic(u'matplotlib nbagg') ## comment this out to run for just python
 import matplotlib as mpl  # TC
@@ -23,34 +23,35 @@ from obspy.core import read, UTCDateTime
 from obspy import Trace, Stream
 
 
-# In[2]:
+# In[3]:
 
 # load in the data and change the start and end times (limits the data)
 st = read("HSR.UW..EHZ.2004.350.000000.SAC") # TC
 #st = read("S:/HSR.UW..EHZ.2004.350.000000.SAC") # local
-full_time_start = UTCDateTime("2004-12-15T23:16:10")
-full_time_end = UTCDateTime("2004-12-15T23:20:20")
+full_time_start = UTCDateTime("2004-12-15T00:00:01")
+full_time_end = UTCDateTime("2004-12-16T00:00:01")
 st_full = st.slice(full_time_start,full_time_end)
 
 
-# In[12]:
+# In[19]:
 
 # normalize the data and select window length
 st_full_n = st_full[0].normalize(norm=None)
 window_length = 1000
 correlation_value = 1
+file_name = 'W' + str(window_length) + "_SD" + str(full_time_start.day) + "_ST" + str(full_time_start.hour) + "." + str(full_time_start.minute) + "." + str(full_time_start.second) + "_ED" + str(full_time_end.day) + "_ET" +  str(full_time_end.hour) + "." + str(full_time_end.minute) + "." + str(full_time_end.second) 
 
 
-# In[81]:
+# In[20]:
 
-def pairTraces(window_length, st_full_n):
+def pairTraces(window_length, st_full_n, file_name):
     # prepares the trace array
     trace_list = [] #empty list
-    corr_file = open('corrfile.txt','w') #opens the file for xcorr values
+    corr_file = open('corrfile_' + file_name + '.txt','w') #opens the file for xcorr values
     corr_file.write("Cross-correlation values \n")
-    trace_file = open('tracefile.txt','w') #opens the file for trace values
+    trace_file = open('tracefile_' + file_name + '.txt','w') #opens the file for trace values
     trace_file.write("Trace values with a window of %s " % window_length                      + ", a start time of %s \n" % full_time_start +                      "and an end time of %s \n" % full_time_end)
-    maxc_file = open('maxcorrs.txt','w') #opens the file for where the xcorr is > correlation value
+    maxc_file = open('maxcorrs_' + file_name + '.txt','w') #opens the file for where the xcorr is > correlation value
     maxc_file.write("Values of cross-correlation which are higher than the threshold of : %s \n" % correlation_value                     + " and the index at which the value occurs \n")
     for i in range(len(st_full_n)-window_length):
         # loops through through whole dataset - window_length to prepare
@@ -62,8 +63,9 @@ def pairTraces(window_length, st_full_n):
         # the cor function and stores the trace
         xc = cor(trace_list[ii],st_full_n,corr_file,maxc_file)
         trace_file.write("%s \n" % str(trace_list[ii])) # writes the trace values to file   
-    #corr_file.close()
-    #trace_file.close()
+    corr_file.close()
+    trace_file.close()
+    maxc_file.close()
     return trace_list, xc # returns the trace values to test that it works
 
 def cor(trace1,st_full_n,corr_file,maxc_file):
@@ -84,49 +86,55 @@ def findValues(xc, correlation_value,maxc_file):
     corr_vals = xc[index]
     return maxc_file.write("%s \t " % corr_vals + "%s \n" % index)
 
-cor_trace_vals,xc = pairTraces(window_length,st_full_n)
+cor_trace_vals, xc = pairTraces(window_length,st_full_n, file_name)
 
 
-# In[57]:
+# In[30]:
+
+#maxc = open("maxcorrs_" + file_name + ".txt")
+#maxc.readline()
+
+
+# In[ ]:
 
 ###################################################
 ###STILL TO IMPLEMENT BEST CORRELATION AND PLOTS### 
 ###################################################
 
-# finds where the index of the maximum xcorr value window is
-# then creates array with just that window in it
-#max_xcorr = np.where(xcorr_dat == max(xcorr_dat[index[0],index[1]]))[0][0]
-#best_win = np.repeat(float('NaN'),len(st_full_n))
-#best_win[max_xcorr:max_xcorr+window_length] = st_full_n[max_xcorr:max_xcorr+window_length]
+# # finds where the index of the maximum xcorr value window is
+# # then creates array with just that window in it
+# max_xcorr = np.where(xcorr_dat == max(xcorr_dat[index[0],index[1]]))[0][0]
+# best_win = np.repeat(float('NaN'),len(st_full_n))
+# best_win[max_xcorr:max_xcorr+window_length] = st_full_n[max_xcorr:max_xcorr+window_length]
 
 
-# In[10]:
+# In[ ]:
 
-#plots and plots and plots
-#file_name = 'W' + str(window_length) + "_SD" + str(full_time_start.day) + "_ST" + str(full_time_start.time) + "_ED" + str(full_time_end.day) + "_ET" + str(full_time_end.time)
-#plt.figure(1)
-#plt.subplot(211)
-#plt.title("Best cross correlation window (highest max value)")
-## best cross-correlation window
-#plt.plot(xcorr_dat[max_xcorr])
-#plt.subplot(212)
-#plt.title("Best match window")
-## window which had the best match
-#ax1 = plt.plot(st_full_n[max_xcorr:max_xcorr+window_length])
-##plt.savefig("/exports/home/s1016630/" + file_name + "_1.png")
-#plt.figure(2)
-#plt.subplot(211)# full cross correlation
-#plt.title("Full cross-correlation")
-#plt.plot(xcorr_dat)
-#ax2 = plt.subplot(212)
-#plt.title("Full dataset with best window in red")
-## plots the full dataset with the best window overlayed in red
-#plt.plot(st_full_n)
-#plt.plot(best_win,'r')
-##ax2.autoscale(enable=False)
-#plt.savefig("/exports/home/s1016630/" + file_name + "_2.png")
-#plt.show()
-##plt.savefig("/exports/home/s1016630/" + file_name + ".png")
+# #plots and plots and plots
+# file_name = 'W' + str(window_length) + "_SD" + str(full_time_start.day) + "_ST" + str(full_time_start.time) + "_ED" + str(full_time_end.day) + "_ET" + str(full_time_end.time)
+# plt.figure(1)
+# plt.subplot(211)
+# plt.title("Best cross correlation window (highest max value)")
+# # best cross-correlation window
+# plt.plot(xcorr_dat[max_xcorr])
+# plt.subplot(212)
+# plt.title("Best match window")
+# # window which had the best match
+# ax1 = plt.plot(st_full_n[max_xcorr:max_xcorr+window_length])
+# #plt.savefig("/exports/home/s1016630/" + file_name + "_1.png")
+# plt.figure(2)
+# plt.subplot(211)# full cross correlation
+# plt.title("Full cross-correlation")
+# plt.plot(xcorr_dat)
+# ax2 = plt.subplot(212)
+# plt.title("Full dataset with best window in red")
+# # plots the full dataset with the best window overlayed in red
+# plt.plot(st_full_n)
+# plt.plot(best_win,'r')
+# #ax2.autoscale(enable=False)
+# #plt.savefig("/exports/home/s1016630/" + file_name + "_2.png")
+# plt.show()
+# #plt.savefig("/exports/home/s1016630/" + file_name + ".png")
 
 
 # In[ ]:
